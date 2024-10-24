@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.crowd.DynamicCrowdRewardRepository">
+
+    <update id="createDynamicCrowdRewardTable">
+        CREATE TABLE IF NOT EXISTS
+            crowd_reward_#{crowd_id} (
+                reward_id INT AUTO_INCREMENT PRIMARY KEY,
+                crowd_id INT default #{crowd_id},
+                reward_title VARCHAR(255) NOT NULL,
+                reward_content VARCHAR(255) NOT NULL,
+                reward_amount INT NOT NULL,
+                reward_limit INT NOT NULL,
+                reward_left INT NOT NULL,
+                is_deleted BOOL default false
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$FindAllById">
+        SELECT
+            reward_id AS rewardId,
+            crowd_id AS crowdId,
+            reward_title AS rewardTitle,
+            reward_content AS rewardContent,
+            reward_amount AS rewardAmount,
+            reward_limit AS rewardLimit,
+            reward_left AS rewardLeft,
+            is_deleted AS isDeleted
+        FROM crowd_reward_#{crowdId}
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$FindAllById">
+        SELECT
+            reward_id AS rewardId,
+            crowd_id AS crowdId,
+            reward_title AS rewardTitle,
+            reward_content AS rewardContent,
+            reward_amount AS rewardAmount,
+            reward_limit AS rewardLimit,
+            reward_left AS rewardLeft,
+            is_deleted AS isDeleted
+        FROM crowd_reward_#{crowdId}
+        WHERE is_deleted = false
+    </select>
+
+    <select id="findByRewardId" parameterType="int" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$FindAllById">
+        SELECT
+            reward_id AS rewardId,
+            crowd_id AS crowdId,
+            reward_title AS rewardTitle,
+            reward_content AS rewardContent,
+            reward_amount AS rewardAmount,
+            reward_limit AS rewardLimit,
+            reward_left AS rewardLeft,
+            is_deleted AS isDeleted
+        FROM crowd_reward_#{crowdId}
+        WHERE reward_id = #{rewardId}
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$Update">
+        INSERT IGNORE INTO crowd_reward_#{crowdId} (reward_id, crowd_id, reward_title, reward_content, reward_amount, reward_limit, reward_left, is_deleted)
+        VALUES (#{rewardId}, #{crowdId}, #{rewardTitle}, #{rewardContent}, #{rewardAmount}, #{rewardLimit}, #{rewardLeft}, #{isDeleted})
+        <!--        VALUES (#{rewardId, jdbcType=INTEGER}, #{crowdId, jdbcType=INTEGER}, #{rewardTitle, jdbcType=VARCHAR},-->
+        <!--        #{rewardContent, jdbcType=VARCHAR}, #{rewardAmount, jdbcType=INTEGER}, #{rewardLimit, jdbcType=INTEGER},-->
+        <!--        #{isDeleted, jdbcType=BIT})-->
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$Update">
+        UPDATE
+            crowd_reward_#{crowdId}
+        SET
+            reward_title = #{rewardTitle},
+            reward_content = #{rewardContent},
+            reward_amount = #{rewardAmount},
+            reward_limit = #{rewardLimit},
+            reward_left = #{rewardLeft}
+        WHERE reward_id = #{rewardId}
+    </update>
+
+    <update id="updateRewardLeft" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdRewardDTO$UpdateRewardLeft">
+        UPDATE
+            crowd_reward_#{crowdId}
+        SET
+            reward_left = #{rewardLeft}
+        WHERE
+            reward_id = #{rewardId}
+    </update>
+
+    <delete id="deleteByCrowdRewardId" parameterType="int">
+        UPDATE crowd_reward_#{crowdId}
+        SET is_deleted = true
+        WHERE reward_id = #{rewardId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+        UPDATE
+            crowd_reward_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_id = #{crowdId}
+    </delete>
+
+    <!--  테스트용 쿼리문  -->
+    <update id="testCreateDynamicCrowdRewardTable">
+        CREATE TABLE crowd_reward_123(
+            reward_id INT AUTO_INCREMENT PRIMARY KEY,
+            crowd_id INT NOT NULL,
+            reward_title varchar(255) NOT NULL,
+            reward_content varchar(255) NOT NULL,
+            reward_amount INT NOT NULL,
+            reward_limit INT NOT NULL,
+            reward_left INT NOT NULL,
+            is_deleted BOOL default false
+        )
+    </update>
+
+
+    <update id="dropCrowdRewardTable">
+        DROP TABLE crowd_reward_123;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO crowd_reward_123 (crowd_id, reward_title, reward_content, reward_amount, reward_limit)
+        VALUES
+        (123, '슈퍼얼리버드1', '기본후원1', 1000, 5),
+        (123, '슈퍼얼리버드2', '기본후원2', 10000, 5),
+        (123, '슈퍼얼리버드3', '기본후원3', 50000, 5)
+    </insert>
+
+</mapper>

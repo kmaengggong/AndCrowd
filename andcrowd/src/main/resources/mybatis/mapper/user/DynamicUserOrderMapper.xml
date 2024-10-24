@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.user.DynamicUserOrderRepository">
+    <update id="createDynamicUserOrderTable">
+        CREATE
+        TABLE IF NOT EXISTS user_order_${userEmail}(
+            u_order_id INT AUTO_INCREMENT PRIMARY KEY,
+            order_id INT NOT NULL
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.user.DynamicUserOrderDTO$Find">
+        SELECT
+            u_order_id as uOrderId,
+            order_id as orderId
+        FROM
+            user_order_${userEmail}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.user.DynamicUserOrderDTO$Find">
+        SELECT
+            u_order_id as uOrderId,
+            order_id as orderId
+        FROM
+            user_order_${userEmail}
+        WHERE
+            u_order_id = #{uOrderId}
+    </select>
+
+    <select id="findByOrderId" resultType="com.fiveis.andcrowd.dto.user.DynamicUserOrderDTO$Find">
+        SELECT
+            u_order_id as uOrderId,
+            order_id as orderId
+        FROM
+            user_order_${userEmail}
+        WHERE
+            order_id = #{orderId}
+    </select>
+
+    <insert id="save">
+        INSERT IGNORE
+        INTO
+            user_order_${userEmail}
+            (u_order_id, order_id)
+        VALUES
+            (#{dynamicUserOrder.uOrderId}, #{dynamicUserOrder.orderId})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM
+            user_order_${userEmail}
+        WHERE
+            u_order_id = #{uOrderId}
+    </delete>
+
+    <delete id="deleteByOrderId">
+        DELETE
+        FROM
+            user_order_${userEmail}
+        WHERE
+            order_id = #{orderId}
+    </delete>
+
+    <update id="deleteTableByUserEmail">
+        DROP TABLE IF EXISTS user_order_${userEmail}
+    </update>
+</mapper>

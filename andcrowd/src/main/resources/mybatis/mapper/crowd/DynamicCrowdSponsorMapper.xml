@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.crowd.DynamicCrowdSponsorRepository">
+
+    <update id="createDynamicCrowdSponsorTable" parameterType="int">
+        CREATE TABLE IF NOT EXISTS
+            crowd_sponsor_#{crowdId} (
+                sponsor_id INT AUTO_INCREMENT PRIMARY KEY,
+                crowd_id INT default #{crowdId},
+                purchase_id INT NOT NULL,
+                is_deleted BOOL default false
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdSponsorDTO$FindById">
+        SELECT
+            sponsor_id AS sponsorId,
+            crowd_id AS crowdId,
+            purchase_id AS purchaseId,
+            is_deleted AS isDeleted
+        FROM crowd_sponsor_#{crowdId}
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdSponsorDTO$FindById">
+        SELECT
+            sponsor_id AS sponsorId,
+            crowd_id AS crowdId,
+            purchase_id AS purchaseId,
+            is_deleted AS isDeleted
+        FROM crowd_sponsor_#{crowdId}
+        WHERE is_deleted = false
+    </select>
+
+    <select id="findBySponsorId" parameterType="int" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdSponsorDTO$FindById">
+        SELECT
+            sponsor_id AS sponsorId,
+            crowd_id AS crowdId,
+            purchase_id AS purchaseId,
+            is_deleted AS isDeleted
+        FROM crowd_sponsor_#{crowdId}
+        WHERE sponsor_id = #{sponsorId}
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdSponsorDTO$Update">
+        INSERT IGNORE INTO crowd_sponsor_#{crowdId} (sponsor_id, crowd_id, purchase_id, is_deleted)
+        VALUES (#{sponsorId}, #{crowdId}, #{purchaseId}, #{isDeleted})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdSponsorDTO$Update">
+        UPDATE crowd_sponsor_#{crowdId}
+        SET
+            crowd_id = #{crowdId},
+            purchase_id = #{purchaseId}
+        WHERE crowd_id = #{crowdId} AND sponsor_id = #{sponsorId}
+    </update>
+
+    <delete id="deleteByCrowdSponsorId" parameterType="int">
+        UPDATE crowd_sponsor_#{crowdId}
+        SET is_deleted = true
+        WHERE sponsor_id = #{sponsorId}
+    </delete>
+
+    <!--  테스트용 쿼리문  -->
+    <update id="testCreateDynamicCrowdSponsorTable">
+        CREATE TABLE crowd_sponsor_456 (
+            sponsor_id INT AUTO_INCREMENT PRIMARY KEY,
+            crowd_id INT NOT NULL,
+            purchase_id INT NOT NULL,
+            is_deleted BOOL default false
+        );
+    </update>
+
+    <update id="dropCrowdSponsorTable">
+        DROP TABLE crowd_sponsor_456;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO crowd_sponsor_456 (crowd_id, purchase_id)
+        VALUES
+        (456, 100),
+        (456, 200),
+        (456, 300);
+    </insert>
+
+</mapper>

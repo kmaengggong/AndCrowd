@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndQnaReplyRepository">
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$FindById">
+        SELECT
+            and_reply_id AS andReplyId,
+            and_qna_id AS andQnaId,
+            and_id AS andId,
+            user_id AS userId,
+            and_reply_content AS andReplyContent ,
+            published_at AS publishedAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM and_qna_reply_#{and_id}
+        ORDER BY and_reply_id DESC
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$FindById">
+        SELECT
+            and_reply_id AS andReplyId,
+            and_qna_id AS andQnaId,
+            and_id AS andId,
+            user_id AS userId,
+            and_reply_content AS andReplyContent ,
+            published_at AS publishedAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM and_qna_reply_#{and_id}
+        WHERE is_deleted = false
+    </select>
+
+    <select id="findAllByAndQnaId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$FindById">
+        SELECT
+            and_reply_id AS andReplyId,
+            and_qna_id AS andQnaId,
+            and_id AS andId,
+            user_id AS userId,
+            and_reply_content AS andReplyContent ,
+            published_at AS publishedAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM and_qna_reply_#{and_id}
+        WHERE and_qna_id = #{andQnaId}
+            AND is_deleted = false
+    </select>
+
+    <select id="findByAndReplyId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$FindById">
+        SELECT
+            and_reply_id AS andReplyId,
+            and_qna_id AS andQnaId,
+            and_id AS andId,
+            user_id AS userId,
+            and_reply_content AS andReplyContent ,
+            published_at AS publishedAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM and_qna_reply_#{and_id}
+        WHERE and_reply_id = #{andReplyId}
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$Update">
+        INSERT INTO and_qna_reply_#{andId} (and_reply_id, and_qna_id, and_id, user_id, and_reply_content, published_at, updated_at, is_deleted)
+        VALUES (#{andReplyId, jdbcType=INTEGER}, #{andQnaId, jdbcType=INTEGER}, #{andId, jdbcType=INTEGER}, #{userId, jdbcType=INTEGER}, #{andReplyContent, jdbcType=VARCHAR}, #{publishedAt, jdbcType=TIMESTAMP}, #{updatedAt, jdbcType=TIMESTAMP}, #{isDeleted, jdbcType=BIT})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndQnaReplyDTO$Update">
+        UPDATE and_qna_reply_#{andId}
+        SET
+            and_reply_content = #{andReplyContent},
+            updated_at = #{updatedAt},
+            is_deleted = #{isDeleted}
+        WHERE and_reply_id = #{andReplyId}
+    </update>
+
+    <delete id="deleteByAndReplyId" parameterType="int">
+        UPDATE and_qna_reply_#{andId}
+        SET is_deleted = true
+        WHERE and_reply_id = #{andReplyId}
+    </delete>
+
+    <delete id="deleteByAndQnaId" parameterType="int">
+        UPDATE and_qna_reply_#{andId}
+        SET is_deleted = true
+        WHERE and_qna_id = #{andQnaId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+        UPDATE and_qna_reply_#{andId}
+        SET is_deleted = true
+        WHERE and_id = #{andId}
+    </delete>
+
+    <!--    테스트를 위한 쿼리문-->
+    <insert id="createAndQnaReplyTable">
+        CREATE TABLE and_qna_reply_123(
+            and_reply_id INT AUTO_INCREMENT PRIMARY KEY ,
+            and_qna_id INT NOT NULL ,
+            and_id INT NOT NULL ,
+            user_id INT NOT NULL ,
+            and_reply_content VARCHAR(2000) NOT NULL ,
+            published_at DATETIME DEFAULT now() ,
+            updated_at DATETIME DEFAULT now() ,
+            is_deleted BOOL default false
+        );
+    </insert>
+
+    <update id="dropAndQnaReplyTable">
+        DROP TABLE and_qna_reply_123;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_qna_reply_123 (and_reply_id, and_qna_id, and_id, user_id, and_reply_content)
+        VALUES
+            (1, 1, 123, 1, 'QnA Reply Content 1'),
+            (2, 2, 123, 2, 'QnA Reply Content 2'),
+            (3, 3, 123, 3, 'QnA Reply Content 3'),
+            (4, 1, 123, 2, 'QnA Reply Content 1-1');
+    </insert>
+
+</mapper>

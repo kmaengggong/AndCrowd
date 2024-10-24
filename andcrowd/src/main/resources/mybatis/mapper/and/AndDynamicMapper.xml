@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.AndDynamicRepository">
+
+    <insert id="createDynamicAndQnaTable">
+        CREATE TABLE IF NOT EXISTS and_qna_#{and_id}(
+          and_qna_id INT AUTO_INCREMENT PRIMARY KEY ,
+          and_id INT default #{and_id},
+          user_id INT NOT NULL ,
+          and_qna_title VARCHAR(200) NOT NULL ,
+          and_qna_content VARCHAR(2000) NOT NULL ,
+          published_at DATETIME DEFAULT now() ,
+          updated_at DATETIME DEFAULT now() ,
+          is_deleted BOOL default false
+        );
+    </insert>
+
+    <insert id="createDynamicAndQnaReplyTable">
+        CREATE TABLE IF NOT EXISTS and_qna_reply_#{and_id}(
+          and_reply_id INT AUTO_INCREMENT PRIMARY KEY ,
+          and_qna_id INT NOT NULL ,
+          and_id INT default #{and_id},
+          user_id INT NOT NULL ,
+          and_reply_content VARCHAR(2000) NOT NULL ,
+          published_at DATETIME DEFAULT now() ,
+          updated_at DATETIME DEFAULT now() ,
+          is_deleted BOOL default false
+        );
+    </insert>
+
+    <insert id="createDynamicAndRoleTable">
+        CREATE TABLE IF NOT EXISTS and_role_#{and_id}(
+            and_role_id INT AUTO_INCREMENT PRIMARY KEY ,
+            and_id INT default #{and_id},
+            and_role VARCHAR(2000) NOT NULL ,
+            and_role_limit INT NOT NULL ,
+            is_deleted BOOL default false
+        );
+    </insert>
+
+    <insert id="createDynamicAndApplicantTable">
+        CREATE TABLE IF NOT EXISTS and_applicant_#{and_id}(
+           and_apply_id INT AUTO_INCREMENT PRIMARY KEY ,
+           and_id INT default #{and_id},
+           user_id INT NOT NULL ,
+           and_role_id INT NOT NULL ,
+           and_apply_title VARCHAR(2000) NOT NULL ,
+           and_apply_content VARCHAR(2000) NOT NULL ,
+           and_apply_file VARCHAR(2000),
+           and_apply_status INT default 0,
+           is_deleted BOOL default false
+        );
+    </insert>
+
+    <insert id="createDynamicAndBoardTable">
+        CREATE TABLE IF NOT EXISTS and_board_#{and_id} (
+        and_board_id INT AUTO_INCREMENT PRIMARY KEY ,
+        and_id INT default #{and_id},
+        user_id INT NOT NULL,
+        and_board_tag INT,
+        and_board_title VARCHAR(200) NOT NULL,
+        and_board_content VARCHAR(2000) NOT NULL,
+        and_img VARCHAR(255),
+        published_at DATETIME DEFAULT now(),
+        updated_at DATETIME DEFAULT now(),
+        and_board_view_count INT DEFAULT 0 ,
+        is_deleted BOOL default false
+        );
+    </insert>
+
+    <insert id="createDynamicAndMemberTable">
+        CREATE TABLE IF NOT EXISTS and_member_#{and_id} (
+        member_id INT AUTO_INCREMENT PRIMARY KEY ,
+        and_id INT default #{and_id},
+        user_id INT NOT NULL,
+        and_apply_id INT,
+        is_deleted BOOL default false
+        );
+    </insert>
+
+
+
+
+</mapper>

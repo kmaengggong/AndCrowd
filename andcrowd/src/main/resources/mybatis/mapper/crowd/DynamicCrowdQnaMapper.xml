@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.crowd.DynamicCrowdQnaRepository">
+
+    <insert id="createDynamicCrowdQnaTable">
+        CREATE TABLE IF NOT EXISTS crowd_qna_#{crowdId}(
+            crowd_qna_id INT AUTO_INCREMENT PRIMARY KEY ,
+            crowd_id INT default #{crowd_id},
+            user_id INT NOT NULL ,
+            qna_title VARCHAR(200) NOT NULL ,
+            qna_content VARCHAR(2000) NOT NULL ,
+            published_at DATETIME DEFAULT now() ,
+            updated_at DATETIME DEFAULT now() ,
+            is_deleted BOOL default false
+        );
+    </insert>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdQnaDTO$Find">
+        SELECT
+            crowd_qna_id AS crowdQnaId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            qna_title AS qnaTitle ,
+            qna_content AS qnaContent ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_qna_#{crowd_id}
+        ORDER BY
+            crowd_qna_id DESC
+    </select>
+
+    <select id="findAllByIsDeletedFalse" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdQnaDTO$Find">
+        SELECT
+            crowd_qna_id AS crowdQnaId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            qna_title AS qnaTitle ,
+            qna_content AS qnaContent ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_qna_#{crowdId}
+        WHERE
+            is_deleted = false
+        ORDER BY
+            crowd_qna_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdQnaDTO$Find">
+        SELECT
+            crowd_qna_id AS crowdQnaId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            qna_title AS qnaTitle ,
+            qna_content AS qnaContent ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_qna_#{crowdId}
+        WHERE
+            crowd_qna_id = #{crowdQnaId}
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdQnaDTO$Update">
+        INSERT INTO
+            crowd_qna_#{crowdId} (
+            crowd_id, user_id, qna_title, qna_content, published_at, updated_at, is_deleted)
+        VALUES
+            (#{crowdId}, #{userId}, #{qnaTitle}, #{qnaContent}, #{publishedAt}, #{updatedAt}, #{isDeleted})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdQnaDTO$Update">
+        UPDATE
+            crowd_qna_#{crowdId}
+        SET
+            qna_title = #{qnaTitle},
+            qna_content = #{qnaContent},
+            updated_at = #{updatedAt},
+            is_deleted = #{isDeleted}
+        WHERE
+            crowd_qna_id = #{crowdQnaId}
+    </update>
+
+    <delete id="deleteByCrowdQnaId" parameterType="int">
+        UPDATE
+            crowd_qna_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_qna_id = #{crowdQnaId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+        UPDATE
+            crowd_qna_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_id = #{crowdId}
+    </delete>
+
+    <select id="countNotDeleted" resultType="int">
+        SELECT COUNT(*) FROM crowd_qna_#{crowdId} WHERE is_deleted = false
+    </select>
+
+</mapper>

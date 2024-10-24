@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndQnaRepository">
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaDTO$FindById">
+        SELECT and_qna_id AS andQnaId,
+               and_id AS andId,
+               user_id AS userId,
+               and_qna_title AS andQnaTitle,
+               and_qna_content AS andQnaContent,
+               published_at AS publishedAt,
+               updated_at AS updatedAt,
+               is_deleted AS isDeleted
+        FROM and_qna_#{and_id}
+        ORDER BY and_qna_id DESC
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaDTO$FindById">
+        SELECT and_qna_id AS andQnaId,
+               and_id AS andId,
+               user_id AS userId,
+               and_qna_title AS andQnaTitle,
+               and_qna_content AS andQnaContent,
+               published_at AS publishedAt,
+               updated_at AS updatedAt,
+               is_deleted AS isDeleted
+        FROM and_qna_#{andId}
+        WHERE is_deleted = false
+        ORDER BY and_qna_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+    <select id="countNotDeleted" resultType="int">
+        SELECT COUNT(*) FROM and_qna_#{andId} WHERE is_deleted = false
+    </select>
+
+    <select id="findByAndQnaId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndQnaDTO$FindById">
+        SELECT and_qna_id AS andQnaId,
+               and_id AS andId,
+               user_id AS userId,
+               and_qna_title AS andQnaTitle,
+               and_qna_content AS andQnaContent,
+               published_at AS publishedAt,
+               updated_at AS updatedAt,
+               is_deleted AS isDeleted
+        FROM and_qna_#{andId}
+        WHERE and_qna_id = #{andQnaId}
+    </select>
+
+<!-- ${andId}를 사용하여 SQL 쿼리의 동적인 부분을 변수로 대체할 때 자바 변수명과 일치하도록 andId로 작성해야 함 -->
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndQnaDTO$Update">
+        INSERT INTO and_qna_#{andId} (and_id, user_id, and_qna_title, and_qna_content, published_at, updated_at, is_deleted)
+        VALUES (#{andId, jdbcType=INTEGER}, #{userId, jdbcType=INTEGER},  #{andQnaTitle, jdbcType=VARCHAR}, #{andQnaContent, jdbcType=VARCHAR}, #{publishedAt, jdbcType=TIMESTAMP}, #{updatedAt, jdbcType=TIMESTAMP}, #{isDeleted, jdbcType=BIT})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndQnaDTO$Update">
+        UPDATE and_qna_#{andId}
+        SET and_qna_title = #{andQnaTitle},
+            and_qna_content = #{andQnaContent}, updated_at = #{updatedAt}, is_deleted = #{isDeleted}
+        WHERE and_qna_id = #{andQnaId}
+    </update>
+
+    <delete id="deleteByAndQnaId" parameterType="int">
+        UPDATE and_qna_#{andId}
+        SET is_deleted = true
+        WHERE and_qna_id = #{andQnaId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+        UPDATE and_qna_#{andId}
+        SET is_deleted = true
+        WHERE and_id = #{andId}
+    </delete>
+
+    <!--    테스트를 위한 쿼리문-->
+    <insert id="createAndQnaTable">
+        CREATE TABLE and_qna_123(
+          and_qna_id INT AUTO_INCREMENT PRIMARY KEY ,
+          and_id INT NOT NULL ,
+          user_id INT NOT NULL ,
+          and_qna_title VARCHAR(200) NOT NULL ,
+          and_qna_content VARCHAR(2000) NOT NULL ,
+          published_at DATETIME DEFAULT now() ,
+          updated_at DATETIME DEFAULT now() ,
+          is_deleted BOOL default false
+        );
+    </insert>
+
+    <update id="dropAndQnaTable">
+        DROP TABLE and_qna_123;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_qna_123 (and_id, user_id, and_qna_title, and_qna_content)
+        VALUES
+            (123, 1, 'QnA Title 1', 'QnA Content 1'),
+            (123, 2, 'QnA Title 2', 'QnA Content 2'),
+            (123, 3, 'QnA Title 3', 'QnA Content 3');
+    </insert>
+
+
+</mapper>

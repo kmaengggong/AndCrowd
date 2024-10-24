@@ -1,0 +1,25 @@
+DROP TABLE and_table;
+create table and_table (
+                           and_id integer not null auto_increment,
+                           ad_id integer not null,
+                           and_category_id integer not null,
+                           and_content varchar(255) not null,
+                           and_end_date datetime(6) not null,
+                           and_header_img varchar(255) not null,
+                           and_img1 varchar(255),
+                           and_img2 varchar(255),
+                           and_img3 varchar(255),
+                           and_img4 varchar(255),
+                           and_img5 varchar(255),
+                           and_like_count integer not null,
+                           and_status integer not null,
+                           and_title varchar(255) not null,
+                           and_view_count integer not null,
+                           crowd_id integer not null,
+                           is_deleted bit not null,
+                           need_num_mem integer not null,
+                           published_at datetime(6),
+                           updated_at datetime(6),
+                           user_id integer not null,
+                           primary key (and_id)
+)

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.crowd.DynamicCrowdBoardRepository">
+
+    <insert id="createDynamicCrowdBoardTable">
+        CREATE TABLE IF NOT EXISTS crowd_board_#{crowd_id} (
+            crowd_board_id INT AUTO_INCREMENT PRIMARY KEY ,
+            crowd_id INT default #{crowd_id} ,
+            user_id INT NOT NULL,
+            crowd_board_tag INT,
+            crowd_board_title VARCHAR(200) NOT NULL ,
+            crowd_board_content VARCHAR(2000) NOT NULL ,
+            crowd_img VARCHAR(255) ,
+            published_at DATETIME DEFAULT now() ,
+            updated_at DATETIME DEFAULT now() ,
+            view_count INT DEFAULT 0 ,
+            is_deleted BOOL default false
+        );
+    </insert>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdBoardDTO$Find">
+        SELECT
+            crowd_board_id AS crowdBoardId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            crowd_board_tag AS crowdBoardTag ,
+            crowd_board_title AS crowdBoardTitle ,
+            crowd_board_content AS crowdBoardContent ,
+            crowd_img AS crowdImg ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            view_count AS viewCount ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_board_#{crowdId}
+    </select>
+
+    <select id="findAllByIsDeletedFalse" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdBoardDTO$Find">
+        SELECT
+            crowd_board_id AS crowdBoardId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            crowd_board_tag AS crowdBoardTag ,
+            crowd_board_title AS crowdBoardTitle ,
+            crowd_board_content AS crowdBoardContent ,
+            crowd_img AS crowdImg ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            view_count AS viewCount ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_board_#{crowdId}
+        WHERE
+            is_deleted = false
+        ORDER BY
+            CASE
+                WHEN crowd_board_tag = 0 THEN 0
+                ELSE 1
+                END, crowd_board_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdBoardDTO$Find">
+        SELECT
+            crowd_board_id AS crowdBoardId ,
+            crowd_id AS crowdId ,
+            user_id AS userId,
+            crowd_board_tag AS crowdBoardTag ,
+            crowd_board_title AS crowdBoardTitle ,
+            crowd_board_content AS crowdBoardContent ,
+            crowd_img AS crowdImg ,
+            published_at AS publishedAt ,
+            updated_at AS updatedAt ,
+            view_count AS viewCount ,
+            is_deleted AS isDeleted
+        FROM
+            crowd_board_#{crowdId}
+        WHERE
+            crowd_board_id = #{crowdBoardId}
+    </select>
+
+    <select id="countNotDeleted" resultType="int">
+        SELECT COUNT(*) FROM crowd_board_#{crowdId} WHERE is_deleted = false
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdBoardDTO$Update">
+        INSERT INTO crowd_board_#{crowdId} (
+            crowd_id, user_id, crowd_board_tag, crowd_board_title, crowd_board_content, crowd_img,
+            published_at, updated_at, view_count, is_deleted)
+        VALUES
+            (#{crowdId}, #{userId}, #{crowdBoardTag}, #{crowdBoardTitle}, #{crowdBoardContent}, #{crowdImg},
+            #{publishedAt}, #{updatedAt}, #{viewCount}, #{isDeleted})
+    </insert>
+
+    <insert id="update" parameterType="com.fiveis.andcrowd.dto.crowd.DynamicCrowdBoardDTO$Update">
+        UPDATE
+            crowd_board_#{crowdId}
+        SET
+            user_id = #{userId},
+            crowd_board_tag = #{crowdBoardTag},
+            crowd_board_title = #{crowdBoardTitle},
+            crowd_board_content = #{crowdBoardContent},
+            crowd_img = #{crowdImg},
+            updated_at = #{updatedAt},
+            view_count = #{viewCount},
+            is_deleted = #{isDeleted}
+        WHERE
+            crowd_id = #{crowdId} AND crowd_board_id = #{crowdBoardId}
+    </insert>
+
+    <delete id="deleteByCrowdBoardId" parameterType="int">
+        UPDATE
+            crowd_board_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_board_id = #{crowdBoardId}
+    </delete>
+
+    <delete id="deleteByCrowdId" parameterType="int">
+        UPDATE
+            crowd_board_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_id = #{crowdId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+        UPDATE
+            crowd_board_#{crowdId}
+        SET
+            is_deleted = true
+        WHERE
+            crowd_id = #{crowdId}
+    </delete>
+
+</mapper>

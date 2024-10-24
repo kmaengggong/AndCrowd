@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.user.DynamicUserAndRepository">
+    <update id="createDynamicUserAndTable">
+        CREATE
+        TABLE IF NOT EXISTS user_and_${userEmail}(
+            u_and_id INT AUTO_INCREMENT PRIMARY KEY,
+            and_id INT NOT NULL
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.user.DynamicUserAndDTO$Find">
+        SELECT
+            u_and_id as uAndId,
+            and_id as andId
+        FROM
+            user_and_${userEmail}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.user.DynamicUserAndDTO$Find">
+        SELECT
+            u_and_id as uAndId,
+            and_id as andId
+        FROM
+            user_and_${userEmail}
+        WHERE
+            u_and_id = #{uAndId}
+    </select>
+
+    <select id="findByAndId" resultType="com.fiveis.andcrowd.dto.user.DynamicUserAndDTO$Find">
+        SELECT
+            u_and_id as uAndId,
+            and_id as andId
+        FROM
+            user_and_${userEmail}
+        WHERE
+            and_id = #{andId}
+    </select>
+
+    <insert id="save">
+        INSERT IGNORE
+        INTO
+            user_and_${userEmail}
+            (u_and_id, and_id)
+        VALUES
+            (#{dynamicUserAnd.uAndId}, #{dynamicUserAnd.andId})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM
+            user_and_${userEmail}
+        WHERE
+            u_and_id = #{uAndId}
+    </delete>
+
+    <delete id="deleteByAndId">
+        DELETE
+        FROM
+            user_and_${userEmail}
+        WHERE
+            and_Id = #{andId}
+    </delete>
+
+    <update id="deleteTableByUserEmail">
+        DROP TABLE IF EXISTS user_and_${userEmail}
+    </update>
+</mapper>

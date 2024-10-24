@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndMemberRepository">
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$Update">
+        INSERT INTO and_member_#{andId} (
+            and_id, user_id, and_apply_id, is_deleted
+        )
+        VALUES (
+                   #{andId}, #{userId}, #{andApplyId}, #{isDeleted}
+               )
+    </insert>
+
+    <select id="findByAndMemberId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$FindByAndMemberId">
+        SELECT
+            member_id AS memberId,
+            and_id AS andId,
+            user_id AS userId,
+            and_apply_id AS andApplyId,
+            is_deleted AS isDeleted
+        FROM and_member_#{andId} WHERE member_id = #{memberId}
+    </select>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$Update">
+        UPDATE and_member_#{andId}
+        SET user_id = #{userId},is_deleted = #{isDeleted}
+        WHERE member_id = #{memberId}
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$FindByAndMemberId">
+        SELECT member_id AS memberId,
+               and_id AS andId,
+               user_id AS userId,
+               and_apply_id AS andApplyId,
+               is_deleted AS isDeleted
+        FROM and_member_#{andId}
+    </select>
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$FindByAndMemberId">
+        SELECT member_id AS memberId,
+               and_id AS andId,
+               user_id AS userId,
+               and_apply_id AS andApplyId,
+               is_deleted AS isDeleted
+        FROM and_member_#{andId}
+        WHERE is_deleted = false
+    </select>
+    <select id="findAllNotDeletedByUserId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndMemberDTO$FindByAndMemberId">
+        SELECT member_id AS memberId,
+               and_id AS andId,
+               user_id AS userId,
+               and_apply_id AS andApplyId,
+               is_deleted AS isDeleted
+        FROM and_member_#{andId}
+        WHERE is_deleted = false
+            AND user_id = #{userId}
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        UPDATE
+            and_member_#{andId}
+        SET
+            is_deleted = true
+        WHERE
+            member_id = #{memberId}
+     </delete>
+
+    <delete id="deleteByUserId" parameterType="int">
+        UPDATE
+            and_member_#{andId}
+        SET
+            is_deleted = true
+        WHERE
+            user_id = #{userId}
+    </delete>
+
+    <insert id="createAndMemberTable">
+        CREATE TABLE and_member_1111 (
+        member_id INT AUTO_INCREMENT PRIMARY KEY,
+        and_id INT NOT NULL,
+        user_id INT NOT NULL,
+        is_deleted BOOL DEFAULT false
+        );
+    </insert>
+
+    <update id="dropAndMemberTable">
+        DROP TABLE and_member_1111;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_member_1111 (and_id, user_id)
+        VALUES
+            (1111, 1),
+            (1111, 2),
+            (1111, 3);
+    </insert>
+
+
+</mapper>

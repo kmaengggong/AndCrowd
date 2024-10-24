@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.user.DynamicUserMakerRepository">
+    <update id="createDynamicUserMakerTable">
+        CREATE
+        TABLE IF NOT EXISTS user_maker_${userEmail}(
+            u_maker_id INT AUTO_INCREMENT PRIMARY KEY,
+            project_id INT NOT NULL,
+            project_type INT NOT NULL
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.user.DynamicUserMakerDTO$Find">
+        SELECT
+            u_maker_id as uMakerId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_maker_${userEmail}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.user.DynamicUserMakerDTO$Find">
+        SELECT
+            u_maker_id as uMakerId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_maker_${userEmail}
+        WHERE
+            u_maker_id = #{uMakerId}
+    </select>
+
+    <select id="findByProject" resultType="com.fiveis.andcrowd.dto.user.DynamicUserMakerDTO$Find">
+        SELECT
+            u_maker_id as uMakerId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_maker_${userEmail}
+        WHERE
+            project_id = #{projectId}
+        AND
+            project_type = #{projectType}
+    </select>
+
+    <insert id="save">
+        INSERT IGNORE
+        INTO
+            user_maker_${userEmail}
+            (u_maker_id, project_id, project_type)
+        VALUES
+            (#{dynamicUserMaker.uMakerId}, #{dynamicUserMaker.projectId}, #{dynamicUserMaker.projectType})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM
+            user_maker_${userEmail}
+        WHERE
+            u_maker_id = #{uMakerId}
+    </delete>
+
+    <delete id="deleteByProjectId">
+        DELETE
+        FROM
+            user_maker_${userEmail}
+        WHERE
+            project_id = #{projectId}
+        AND
+            project_type = #{projectType}
+    </delete>
+
+    <update id="deleteTableByUserEmail">
+        DROP TABLE IF EXISTS user_maker_${userEmail}
+    </update>
+</mapper>

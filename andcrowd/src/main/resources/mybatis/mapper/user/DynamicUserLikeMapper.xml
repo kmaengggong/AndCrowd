@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fiveis.andcrowd.repository.user.DynamicUserLikeRepository">
+    <update id="createDynamicUserLikeTable">
+        CREATE
+        TABLE IF NOT EXISTS user_like_${userEmail}(
+            u_like_id INT AUTO_INCREMENT PRIMARY KEY,
+            project_id INT NOT NULL,
+            project_type INT NOT NULL
+        )
+    </update>
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.user.DynamicUserLikeDTO$Find">
+        SELECT
+            u_like_id as uLikeId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_like_${userEmail}
+    </select>
+
+    <select id="findById" resultType="com.fiveis.andcrowd.dto.user.DynamicUserLikeDTO$Find">
+        SELECT
+            u_like_id as uLikeId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_like_${userEmail}
+        WHERE
+            u_like_id = #{uLikeId}
+    </select>
+
+    <select id="findByProject" resultType="com.fiveis.andcrowd.dto.user.DynamicUserLikeDTO$Find">
+        SELECT
+            u_like_id as uLikeId,
+            project_id as projectId,
+            project_type as projectType
+        FROM
+            user_like_${userEmail}
+        WHERE
+            project_id = #{projectId}
+        AND
+            project_type = #{projectType}
+    </select>
+
+    <insert id="save">
+        INSERT IGNORE
+        INTO
+            user_like_${userEmail}
+            (u_like_id, project_id, project_type)
+        VALUES
+            (#{dynamicUserLike.uLikeId}, #{dynamicUserLike.projectId}, #{dynamicUserLike.projectType})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM
+            user_like_${userEmail}
+        WHERE
+            u_like_id = #{uLikeId}
+    </delete>
+
+    <delete id="deleteByProjectId">
+        DELETE
+        FROM
+            user_like_${userEmail}
+        WHERE
+            project_id = #{projectId}
+        AND
+            project_type = #{projectType}
+    </delete>
+
+    <update id="deleteTableByUserEmail">
+        DROP TABLE IF EXISTS user_like_${userEmail}
+    </update>
+</mapper>

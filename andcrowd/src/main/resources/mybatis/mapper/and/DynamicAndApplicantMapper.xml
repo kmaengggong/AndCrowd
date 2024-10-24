@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndApplicantRepository">
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindById">
+        SELECT
+            and_apply_id AS andApplyId,
+            and_id AS andId,
+            user_id AS userId,
+            and_role_id AS andRoleId,
+            and_apply_title AS andApplyTitle,
+            and_apply_content AS andApplyContent,
+            and_apply_file AS andApplyFile,
+            and_apply_status AS andApplyStatus,
+            is_deleted AS isDeleted
+        FROM and_applicant_#{and_id}
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindById">
+        SELECT
+            and_apply_id AS andApplyId,
+            and_id AS andId,
+            user_id AS userId,
+            and_role_id AS andRoleId,
+            and_apply_title AS andApplyTitle,
+            and_apply_content AS andApplyContent,
+            and_apply_file AS andApplyFile,
+            and_apply_status AS andApplyStatus,
+            is_deleted AS isDeleted
+        FROM and_applicant_#{and_id}
+        WHERE is_deleted = false
+    </select>
+
+    <select id="findByAndApplicantId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindById">
+        SELECT
+            and_apply_id AS andApplyId,
+            and_id AS andId,
+            user_id AS userId,
+            and_role_id AS andRoleId,
+            and_apply_title AS andApplyTitle,
+            and_apply_content AS andApplyContent,
+            and_apply_file AS andApplyFile,
+            and_apply_status AS andApplyStatus,
+            is_deleted AS isDeleted
+        FROM and_applicant_#{and_id}
+        WHERE and_apply_id = #{andApplyId}
+    </select>
+
+    <select id="findByUserId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindById">
+        SELECT
+            and_apply_id AS andApplyId,
+            and_id AS andId,
+            user_id AS userId,
+            and_role_id AS andRoleId,
+            and_apply_title AS andApplyTitle,
+            and_apply_content AS andApplyContent,
+            and_apply_file AS andApplyFile,
+            and_apply_status AS andApplyStatus,
+            is_deleted AS isDeleted
+        FROM and_applicant_#{and_id}
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findByAndRoleId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindById">
+        SELECT
+            and_apply_id AS andApplyId,
+            and_id AS andId,
+            user_id AS userId,
+            and_role_id AS andRoleId,
+            and_apply_title AS andApplyTitle,
+            and_apply_content AS andApplyContent,
+            and_apply_file AS andApplyFile,
+            and_apply_status AS andApplyStatus,
+            is_deleted AS isDeleted
+        FROM and_applicant_#{and_id}
+        WHERE and_role_id = #{andRoleId}
+    </select>
+
+    <select id="findByAndRoleIdWithCount" resultType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$FindByIdWithCount">
+        SELECT
+            and_role_id AS andRoleId,
+            COUNT(*) AS count
+        FROM and_applicant_#{and_id}
+        WHERE is_deleted = false
+        GROUP BY and_role_id
+    </select>
+
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$Update">
+        INSERT IGNORE INTO and_applicant_#{andId} (and_apply_id, and_id, user_id, and_role_id, and_apply_title, and_apply_content, and_apply_file, and_apply_status, is_deleted)
+        VALUES (#{andApplyId, jdbcType=INTEGER}, #{andId, jdbcType=INTEGER}, #{userId, jdbcType=INTEGER}, #{andRoleId, jdbcType=INTEGER}, #{andApplyTitle, jdbcType=VARCHAR}, #{andApplyContent, jdbcType=VARCHAR}, #{andApplyFile, jdbcType=VARCHAR}, #{andApplyStatus, jdbcType=INTEGER}, #{isDeleted, jdbcType=BIT})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndApplicantDTO$Update">
+        UPDATE and_applicant_#{andId}
+        SET and_role_id = #{andRoleId},
+            and_apply_title = #{andApplyTitle},
+            and_apply_content = #{andApplyContent},
+            and_apply_file = #{andApplyFile}
+        WHERE and_apply_id = #{andApplyId}
+    </update>
+
+    <update id="updateApplyStatus" parameterType="int">
+        UPDATE and_applicant_#{andId}
+        SET
+            and_apply_status = #{andApplyStatus}
+        WHERE and_apply_id = #{andApplyId}
+    </update>
+
+    <delete id="deleteByAndApplicantId" parameterType="int">
+        UPDATE and_applicant_#{andId}
+        SET is_deleted = true
+        WHERE and_apply_id = #{andApplyId}
+    </delete>
+
+    <!--    테스트를 위한 쿼리문-->
+    <insert id="createAndApplicantTable">
+        CREATE TABLE and_applicant_123 (
+            and_apply_id INT AUTO_INCREMENT PRIMARY KEY ,
+            and_id INT NOT NULL ,
+            user_id INT NOT NULL ,
+            and_role_id INT NOT NULL ,
+            and_apply_content VARCHAR(2000) NOT NULL ,
+            and_apply_status INT default 0,
+            is_deleted BOOL default false
+        );
+    </insert>
+
+    <update id="dropAndApplicantTable">
+        DROP TABLE and_applicant_123;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_applicant_123 (and_apply_id, and_id, user_id, and_role_id, and_apply_content)
+        VALUES
+            (1, 123, 11, 3, '신청서 내용 1'),
+            (2, 123, 12, 2, '신청서 내용 2'),
+            (3, 123, 12, 1, '신청서 내용 3');
+    </insert>
+
+
+</mapper>

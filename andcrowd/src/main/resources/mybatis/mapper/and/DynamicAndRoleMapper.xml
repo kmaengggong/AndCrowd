@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndRoleRepository">
+
+    <select id="findAll" resultType="com.fiveis.andcrowd.dto.and.DynamicAndRoleDTO$FindById">
+        SELECT
+            and_role_id AS andRoleId,
+            and_id AS andId,
+            and_role AS andRole,
+            and_role_limit AS andRoleLimit,
+            is_deleted AS isDeleted
+        FROM and_role_#{and_id}
+    </select>
+
+    <select id="findAllNotDeleted" resultType="com.fiveis.andcrowd.dto.and.DynamicAndRoleDTO$FindById">
+        SELECT
+            and_role_id AS andRoleId,
+            and_id AS andId,
+            and_role AS andRole,
+            and_role_limit AS andRoleLimit,
+            is_deleted AS isDeleted
+        FROM and_role_#{and_id}
+        WHERE is_deleted = false
+    </select>
+
+    <select id="findByAndRoleId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndRoleDTO$FindById">
+        SELECT
+            and_role_id AS andRoleId,
+            and_id AS andId,
+            and_role AS andRole,
+            and_role_limit AS andRoleLimit,
+            is_deleted AS isDeleted
+        FROM and_role_#{and_id}
+        WHERE and_role_id = #{andRoleId}
+    </select>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndRoleDTO$Update">
+        INSERT INTO and_role_#{andId} (and_role_id, and_id, and_role, and_role_limit, is_deleted)
+        VALUES (#{andRoleId, jdbcType=INTEGER}, #{andId, jdbcType=INTEGER}, #{andRole, jdbcType=VARCHAR}, #{andRoleLimit, jdbcType=INTEGER}, #{isDeleted, jdbcType=BIT})
+    </insert>
+
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndRoleDTO$Update">
+        UPDATE and_role_#{andId}
+        SET and_role = #{andRole},
+            and_role_limit = #{andRoleLimit}
+        WHERE and_role_id = #{andRoleId}
+    </update>
+
+    <delete id="deleteByAndRoleId" parameterType="int">
+        UPDATE and_role_#{andId}
+        SET is_deleted = true
+        WHERE and_role_id = #{andRoleId}
+    </delete>
+
+    <!--    테스트를 위한 쿼리문-->
+    <insert id="createAndRoleTable">
+        CREATE TABLE and_role_123 (
+           and_role_id INT AUTO_INCREMENT PRIMARY KEY ,
+           and_id INT NOT NULL ,
+           and_role VARCHAR(2000) NOT NULL ,
+           and_role_limit INT NOT NULL ,
+           is_deleted BOOL default false
+        );
+    </insert>
+
+    <update id="dropAndRoleTable">
+        DROP TABLE and_role_123;
+    </update>
+
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_role_123 (and_role_id, and_id, and_role, and_role_limit)
+        VALUES
+            (1, 123, '역할 1', 10),
+            (2, 123, '역할 2', 20),
+            (3, 123, '역할 3', 30);
+    </insert>
+
+
+</mapper>

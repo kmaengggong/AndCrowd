@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fiveis.andcrowd.repository.and.DynamicAndBoardRepository">
+    <select id="findAll"  resultType="com.fiveis.andcrowd.dto.and.DynamicAndBoardDTO$FindById">
+        SELECT and_board_id AS andBoardId,
+               and_id AS andId,
+               user_id AS userId,
+               and_board_tag AS andBoardTag,
+               and_board_title AS andBoardTitle,
+               and_board_content AS andBoardContent,
+               and_img AS andImg,
+               published_at AS publishedAt,
+               updated_at AS updatedAt,
+               and_board_view_count AS andBoardViewCount,
+               is_deleted AS isDeleted
+        FROM and_board_#{andId}
+    </select>
+    <select id="findAllNotDeleted"  resultType="com.fiveis.andcrowd.dto.and.DynamicAndBoardDTO$FindById">
+        SELECT and_board_id AS andBoardId,
+               and_id AS andId,
+               user_id AS userId,
+               and_board_tag AS andBoardTag,
+               and_board_title AS andBoardTitle,
+               and_board_content AS andBoardContent,
+               and_img AS andImg,
+               published_at AS publishedAt,
+               updated_at AS updatedAt,
+               and_board_view_count AS andBoardViewCount,
+               is_deleted AS isDeleted
+        FROM and_board_#{andId}
+        WHERE is_deleted = false
+        ORDER BY
+            CASE
+                WHEN and_board_tag = 0 THEN 0
+                ELSE 1
+                END, and_board_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="findByAndBoardId" resultType="com.fiveis.andcrowd.dto.and.DynamicAndBoardDTO$FindById">
+        SELECT
+            and_board_id AS andBoardId,
+            and_id AS andId,
+            user_id AS userId,
+            and_board_tag AS andBoardTag,
+            and_board_title AS andBoardTitle,
+            and_board_content AS andBoardContent,
+            and_img AS andImg,
+            published_at AS publishedAt,
+            updated_at AS updatedAt,
+            and_board_view_count AS andBoardViewCount,
+            is_deleted AS isDeleted
+        FROM and_board_#{andId} WHERE and_board_id = #{andBoardId}
+    </select>
+
+    <select id="countNotDeleted" resultType="int">
+        SELECT COUNT(*) FROM and_board_#{andId} WHERE is_deleted = false
+    </select>
+
+    <delete id="deleteByAndId" parameterType="int">
+        UPDATE
+            and_board_#{andId}
+        SET
+            is_deleted = true
+        WHERE
+            and_id = #{andId}
+    </delete>
+    <delete id="deleteByAndBoardId" parameterType="int">
+        UPDATE
+            and_board_#{andId}
+        SET
+            is_deleted = true
+        WHERE
+            and_board_id = #{andBoardId}
+    </delete>
+    <delete id="deleteAll" parameterType="int">
+        UPDATE
+            and_board_#{andId}
+        SET
+            is_deleted = true
+        WHERE
+            and_id = #{andId}
+    </delete>
+
+    <insert id="save" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndBoardDTO$Update">
+        INSERT INTO and_board_#{andId} (
+            and_id, user_id, and_board_tag, and_board_title,
+            and_board_content, and_img, published_at, updated_at,
+            and_board_view_count, is_deleted
+        )
+        VALUES (
+                   #{andId}, #{userId}, #{andBoardTag}, #{andBoardTitle},
+                   #{andBoardContent}, #{andImg}, #{publishedAt}, #{updatedAt},
+                   #{andBoardViewCount}, #{isDeleted}
+               )
+    </insert>
+    <update id="update" parameterType="com.fiveis.andcrowd.dto.and.DynamicAndBoardDTO$Update">
+        UPDATE and_board_#{andId}
+        SET
+            user_id = #{userId},
+            and_board_tag = #{andBoardTag},
+            and_board_title = #{andBoardTitle},
+            and_board_content = #{andBoardContent},
+            and_img = #{andImg},
+            updated_at = #{updatedAt},
+            and_board_view_count = #{andBoardViewCount},
+            is_deleted = #{isDeleted}
+        WHERE
+            and_id = #{andId} AND and_board_id = #{andBoardId}
+    </update>
+    <insert id="createAndTestBoardTable">
+        CREATE TABLE and_board_1111 (
+        and_board_id INT AUTO_INCREMENT PRIMARY KEY ,
+        and_id INT NOT NULL,
+        user_id INT NOT NULL,
+        and_board_tag INT,
+        and_board_title VARCHAR(200) NOT NULL,
+        and_board_content VARCHAR(2000) NOT NULL,
+        and_img VARCHAR(255),
+        published_at DATETIME DEFAULT now(),
+        updated_at DATETIME DEFAULT now(),
+        and_board_view_count INT DEFAULT 0 ,
+        is_deleted BOOL default false
+        );
+    </insert>
+    <update id="dropAndBoardTable">
+        DROP TABLE and_board_1111;
+    </update>
+    <insert id="insertTestData">
+        INSERT IGNORE INTO and_board_1111 (and_id, user_id, and_board_title, and_board_content)
+        VALUES
+            (1111, 1, 'Board Title 1', 'Board Content 1'),
+            (1111, 2, 'Board Title 2', 'Board Content 2'),
+            (1111, 3, 'Board Title 3', 'Board Content 3');
+    </insert>
+</mapper>
